@@ -1,7 +1,7 @@
 // *********************************************************************************
 // LIGA/DESLIGA LED VIA BLUETOOTH
 //
-// Este cÛdigo seta a comunicaÁ„o via UART.
+// Este c√≥digo seta a comunica√ß√£o via UART.
 // Recebe um valor:
 //   - Se a: Liga o LED P1.0
 //           Envia "Ligado"
@@ -15,21 +15,21 @@
 #include <msp430.h>
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                       VARI¡VEIS, CONSTANTES, ETC.
+//                       VARI√ÅVEIS, CONSTANTES, ETC.
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-// AtribuiÁ„o de pinos
+// Atribui√ß√£o de pinos
 #define TXD BIT1    // P1.1 UCA0TXD
 #define RXD BIT2    // P1.2 UCA0RXD
 #define LED BIT0    // P1.0
 
-// Vari·veis
+// Vari√°veis
 unsigned char rx_uart_byte = 0;     // Caracter recebido
 unsigned char rx_uart_flag = 0;     // Indica se tem caracter novo
 
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                           PROT”TIPOS DE FUN«√O
+//                           PROT√ìTIPOS DE FUN√á√ÉO
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 void Clock1MHz_init(void);                      // Inicia o uC em 1MHz
@@ -42,12 +42,12 @@ void Uart_9600_tx_string(char *string);         // Envia uma string
 
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                             FUN«√O PRINCIPAL
+//                             FUN√á√ÉO PRINCIPAL
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 void main(void)
 {
-	WDTCTL = WDTPW | WDTHOLD;		            // P·ra o Watchdog Timer
+    WDTCTL = WDTPW | WDTHOLD;		     	// P√°ra o Watchdog Timer
 
     Clock1MHz_init();
     Pins_init();
@@ -55,9 +55,9 @@ void main(void)
 
     while(1)                                    // Loop infinito
     {
-        __bis_SR_register(CPUOFF + GIE);        // Entra em LPM0, InterrupÁıes habilitadas
+        __bis_SR_register(CPUOFF + GIE);        // Entra em LPM0, Interrup√ß√µes habilitadas
 
-        if (rx_uart_flag)                       // Se rx_uart_flag for verdadeiro, ent„o temos 1 byte a ser lido
+        if (rx_uart_flag)                       // Se rx_uart_flag for verdadeiro, ent√£o temos 1 byte a ser lido
         {
             if(rx_uart_byte == 'a')
             {
@@ -83,12 +83,12 @@ void main(void)
 
 void Clock1MHz_init(void)
 {
-    if (CALBC1_1MHZ==0xFF)      // Se as constantes de calibraÁ„o foram apagadas
+    if (CALBC1_1MHZ==0xFF)      // Se as constantes de calibra√ß√£o foram apagadas
     {
         while(1);               // TRAVE O PROGRAMA!
     }
 
-    DCOCTL = 0;                 // Seleciona as opÁıes de DCOx e MODx mais baixas
+    DCOCTL = 0;                 // Seleciona as op√ß√µes de DCOx e MODx mais baixas
     BCSCTL1 = CALBC1_1MHZ;
     DCOCTL = CALDCO_1MHZ;
 }
@@ -105,7 +105,7 @@ void Pins_init(void)
 
 
 // =============================================================================
-// FUN«’ES DA UART
+// FUN√á√ïES DA UART
 // =============================================================================
 
 //------------------------------------------------------------------------------
@@ -117,10 +117,10 @@ void Uart_9600_init_1MHz(void)
     UCA0BR0 = 104;                  // 1MHz 9600
     UCA0BR1 = 0;                    // 1MHz 9600
     UCA0MCTL = UCBRS0;              // Modulation UCBRSx = 1
-    UCA0CTL1 &= ~UCSWRST;           // Inicia a m·quina de estados da USCIA0
-    IE2 |= UCA0RXIE;                // Habilita interrupÁ„o USCI_A0 RX
+    UCA0CTL1 &= ~UCSWRST;           // Inicia a m√°quina de estados da USCIA0
+    IE2 |= UCA0RXIE;                // Habilita interrup√ß√£o USCI_A0 RX
 
-    // OBS: N„o precisa habilitar UCA0TXIE pois vamos usar pooling nele.
+    // OBS: N√£o precisa habilitar UCA0TXIE pois vamos usar pooling nele.
 }
 
 //------------------------------------------------------------------------------
@@ -128,9 +128,9 @@ void Uart_9600_init_1MHz(void)
 //------------------------------------------------------------------------------
 void Uart_9600_tx(unsigned char byte)
 {
-    while (!(IFG2&UCA0TXIFG));      // USCI_A0 TX buffer est· pronto?
-                                    // Pooling da flag de interrupÁ„o do TX da Uart
-                                    // Mas espere... Por que n„o est· no vetor de interrupÁ„o?
+    while (!(IFG2&UCA0TXIFG));      // USCI_A0 TX buffer est√° pronto?
+                                    // Pooling da flag de interrup√ß√£o do TX da Uart
+                                    // Mas espere... Por que n√£o est√° no vetor de interrup√ß√£o?
     UCA0TXBUF = byte;
 }
 
@@ -163,13 +163,13 @@ void __attribute__ ((interrupt(USCIAB0RX_VECTOR))) USCIAB0RX_ISR (void)
 #error Compiler not supported!
 #endif
 {
-    if (IFG2 & UCA0RXIFG)                   // Checamos IFG2 para ver se UCA0RXIFG È setado.
+    if (IFG2 & UCA0RXIFG)                   // Checamos IFG2 para ver se UCA0RXIFG √© setado.
     {
-        rx_uart_byte = UCA0RXBUF;           // Atribui o buffer UCA0RXBUF ‡ rx_uart_byte
+        rx_uart_byte = UCA0RXBUF;           // Atribui o buffer UCA0RXBUF √† rx_uart_byte
         rx_uart_flag = 1;                   // Como tinha algo no buffer, indicamos que tem um caracter novo
 
-        IFG2 &= ~UCA0RXIFG;                 // Agora precisamos zerar a flag de interrupÁ„o, para que ela
-                                            // possa ser setada de novo quando tiver uma nova interrupÁ„o.
+        IFG2 &= ~UCA0RXIFG;                 // Agora precisamos zerar a flag de interrup√ß√£o, para que ela
+                                            // possa ser setada de novo quando tiver uma nova interrup√ß√£o.
         __bic_SR_register_on_exit(CPUOFF);  // Sai do estado de baixa energia
     }
 }
