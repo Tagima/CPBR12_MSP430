@@ -25,7 +25,6 @@
 
 // Variáveis
 unsigned char rx_uart_byte = 0;     // Caracter recebido
-unsigned char rx_uart_flag = 0;     // Indica se tem caracter novo
 
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -57,22 +56,17 @@ void main(void)
     {
         __bis_SR_register(CPUOFF + GIE);        // Entra em LPM0, Interrupções habilitadas
 
-        if (rx_uart_flag)                       // Se rx_uart_flag for verdadeiro, então temos 1 byte a ser lido
+        if(rx_uart_byte == 'a')
         {
-            if(rx_uart_byte == 'a')
-            {
-                P1OUT |= LED;
-                Uart_9600_tx_string("Ligado.\n");
+            P1OUT |= LED;
+            Uart_9600_tx_string("Ligado.\n");
 
-            }
+        }
 
-            if(rx_uart_byte == 'b')
-            {
-                P1OUT &= ~LED;
-                Uart_9600_tx_string("Desligado.\n");
-            }
-
-            rx_uart_flag = 0;                   // Terminamos de processar a mensagem recebida.
+        if(rx_uart_byte == 'b')
+        {
+            P1OUT &= ~LED;
+            Uart_9600_tx_string("Desligado.\n");
         }
     }
 }
@@ -166,7 +160,6 @@ void __attribute__ ((interrupt(USCIAB0RX_VECTOR))) USCIAB0RX_ISR (void)
     if (IFG2 & UCA0RXIFG)                   // Checamos IFG2 para ver se UCA0RXIFG é setado.
     {
         rx_uart_byte = UCA0RXBUF;           // Atribui o buffer UCA0RXBUF à rx_uart_byte
-        rx_uart_flag = 1;                   // Como tinha algo no buffer, indicamos que tem um caracter novo
 
         IFG2 &= ~UCA0RXIFG;                 // Agora precisamos zerar a flag de interrupção, para que ela
                                             // possa ser setada de novo quando tiver uma nova interrupção.
